@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLA Complaint Management System</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.5s ease-out forwards;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #004AAD;
+            animation: spin 1s ease infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .modal-content {
+            max-height: 80vh;
+        }
+
+        .custom-checkbox {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+
+    <!-- Login Page (Initially Visible) -->
+    <div id="login-page" class="flex items-center justify-center h-screen bg-gray-200">
+        <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg animate-fade-in">
+            <div class="text-center">
+                <img src="https://placehold.co/100x100/004AAD/FFFFFF?text=Logo" alt="Logo"
+                    class="w-24 h-24 mx-auto rounded-full">
+                <h2 class="mt-6 text-3xl font-bold text-gray-900">MLA Office Login</h2>
+                <p class="mt-2 text-sm text-gray-600">Please sign in to continue</p>
+            </div>
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="username" class="text-sm font-medium text-gray-700">Username</label>
+                    <input id="username" name="username" type="text" required
+                        class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                        placeholder="username">
+                </div>
+                <div>
+                    <label for="password" class="text-sm font-medium text-gray-700">Password</label>
+                    <input id="password" name="password" type="password" required
+                        class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                        placeholder="••••••••">
+                </div>
+                <div id="login-error" class="text-sm text-red-600 h-4"></div>
+                <div>
+                    <button type="submit"
+                        class="w-full px-4 py-2 font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700">Sign
+                        In</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application (Initially Hidden) -->
+    <div id="app-container" class="hidden h-screen">
+        <div class="flex h-full">
+            <!-- Sidebar -->
+            <div class="w-64 bg-[#004AAD] text-white flex-col fixed h-full hidden md:flex">
+                <div class="p-4 border-b border-blue-700 flex flex-col items-center">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJraK6O5ybydWVgpqu152Dtmvnsjh2eKljfA&s" alt="Logo"
+                        class="w-20 h-20 mx-auto rounded-full mb-2">
+                    <h1 class="text-xl font-bold text-center">MLA Office</h1>
+                </div>
+                <nav class="flex-grow mt-4">
+                    <button data-view="dashboard"
+                        class="nav-button flex items-center w-full px-4 py-3 bg-blue-700 text-white">
+                        <svg class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="3" width="7" height="9"></rect>
+                            <rect x="14" y="3" width="7" height="5"></rect>
+                            <rect x="14" y="12" width="7" height="9"></rect>
+                            <rect x="3" y="16" width="7" height="5"></rect>
+                        </svg>
+                        <span>Dashboard</span>
+                    </button>
+                    <button data-view="complaints"
+                        class="nav-button flex items-center w-full px-4 py-3 text-blue-100 hover:bg-blue-600">
+                        <svg class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 8 9"></polyline>
+                        </svg>
+                        <span>Complaints</span>
+                    </button>
+                </nav>
+                <div class="p-4 border-t border-blue-700 text-center text-xs text-blue-200">
+                    <p>Developed by Ranveer (CyberShikshak)</p>
+                    <div class="flex justify-center gap-4 mt-2">
+                        <a href="https://instagram.com/cybershikshak" target="_blank"
+                            class="hover:text-white">Instagram</a>
+                        <a href="https://youtube.com/cybershikshak" target="_blank" class="hover:text-white">YouTube</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="flex-1 flex flex-col md:ml-64">
+                <header class="bg-white shadow-sm border-b sticky top-0 z-20">
+                    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="flex items-center justify-between h-16">
+                            <div>
+                                <h2 class="text-xl font-bold text-gray-800">Complaint Management</h2>
+                                <p class="text-sm text-gray-500">Welcome, <span id="user-name-display"
+                                        class="font-medium"></span>!</p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <button id="new-complaint-btn"
+                                    class="inline-flex items-center rounded-md bg-[#004AAD] py-2 px-4 text-sm text-white hover:bg-blue-800">
+                                    <svg class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    New Complaint
+                                </button>
+                                <button id="logout-btn"
+                                    class="text-sm font-medium text-gray-600 hover:text-indigo-600">Logout</button>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <main class="flex-1 overflow-y-auto">
+                    <div id="dashboard-view" class="view-content p-4 md:p-8">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-6">Live Dashboard</h2>
+                        <div id="stats-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"></div>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-white p-6 rounded-xl shadow-md border h-80"><canvas
+                                    id="complaintsByTypeChart"></canvas></div>
+                            <div class="bg-white p-6 rounded-xl shadow-md border h-80"><canvas
+                                    id="complaintsByStatusChart"></canvas></div>
+                        </div>
+                    </div>
+
+                    <div id="complaints-view" class="view-content p-4 md:p-8 hidden">
+                        <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                            <h2 class="text-3xl font-bold text-gray-800">Complaint Register</h2>
+                            <div class="flex items-center gap-4">
+                                <input type="text" id="search-input" class="rounded-md border-gray-300 shadow-sm"
+                                    placeholder="Search...">
+                                <button id="bulk-delete-btn"
+                                    class="hidden role-admin inline-flex items-center rounded-md border bg-red-600 py-2 px-4 text-sm text-white hover:bg-red-700">Delete
+                                    Selected</button>
+                            </div>
+                        </div>
+                        <div id="message-box" class="mb-4"></div>
+                        <div id="loader" class="flex justify-center items-center py-10">
+                            <div class="spinner"></div>
+                            <p class="ml-4 text-gray-600">Loading complaints...</p>
+                        </div>
+                        <div id="complaints-table-container"
+                            class="bg-white rounded-xl shadow-md border overflow-x-auto hidden">
+                            <table class="w-full text-sm text-left text-gray-600">
+                                <thead class="bg-gray-50 text-xs text-gray-700 uppercase">
+                                    <tr>
+                                        <th class="px-4 py-3 role-admin" style="display: none;"><input type="checkbox"
+                                                id="select-all-checkbox" class="custom-checkbox"></th>
+                                        <th class="px-6 py-3">ID</th>
+                                        <th class="px-6 py-3">Name</th>
+                                        <th class="px-6 py-3">Type</th>
+                                        <th class="px-6 py-3">Title</th>
+                                        <th class="px-6 py-3">Status</th>
+                                        <th class="px-6 py-3">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="complaints-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="complaint-modal"
+        class="fixed inset-0 bg-black bg-opacity-60 z-30 flex justify-center items-center p-4 hidden">
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg w-full max-w-2xl animate-fade-in modal-content">
+            <h2 id="modal-title" class="text-2xl font-bold text-gray-900 mb-4">Register New Complaint</h2>
+            <form id="complaint-form" class="space-y-4 overflow-y-auto pr-2">
+                <input type="hidden" name="rowNumber" id="rowNumber">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="name" class="block text-sm font-medium">Name</label>
+                        <input type="text" name="name" id="name" required
+                            class="mt-1 w-full rounded-md border border-gray-300 p-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                    </div>
+                    <div>
+                        <label for="mobile" class="block text-sm font-medium">Mobile</label>
+                        <input type="tel" name="mobile" id="mobile" required maxlength="10" pattern="\d{10}"
+                            class="mt-1 w-full rounded-md border border-gray-300 p-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                    </div>
+                </div>
+                <div>
+                    <label for="address" class="block text-sm font-medium">Address</label>
+                    <textarea name="address" id="address" rows="2" required
+                        class="mt-1 w-full rounded-md border border-gray-300 p-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                </div>
+                <hr />
+                <div>
+                    <label for="title" class="block text-sm font-medium">Title</label>
+                    <input type="text" name="title" id="title" required
+                        class="mt-1 w-full rounded-md border border-gray-300 p-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="type" class="block text-sm font-medium">Type</label>
+                        <select id="type" name="type"
+                            class="mt-1 w-full rounded-md border border-gray-300 p-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <option>Sewerage</option>
+                            <option>Water</option>
+                            <option>Electricity</option>
+                            <option>Roads</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="ward" class="block text-sm font-medium">Ward</label>
+                        <select id="ward" name="ward"
+                            class="mt-1 w-full rounded-md border border-gray-300 p-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <option>Ward 1</option>
+                            <option>Ward 2</option>
+                            <option>Ward 3</option>
+                            <option>Ward 4</option>
+                            <option>Ward 5</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label for="description" class="block text-sm font-medium">Description</label>
+                    <textarea id="description" name="description" rows="3" required
+                        class="mt-1 w-full rounded-md border border-gray-300 p-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                </div>
+                <div class="flex justify-end space-x-4 pt-4">
+                    <button type="button" class="modal-cancel-btn rounded-md border bg-white py-2 px-6">Cancel</button>
+                    <button type="submit" id="submit-btn"
+                        class="inline-flex items-center rounded-md border bg-indigo-600 py-2 px-6 text-white">Save
+                        Complaint</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="details-modal"
+        class="fixed inset-0 bg-black bg-opacity-60 z-40 flex justify-center items-center p-4 hidden">
+        <div class="bg-white p-6 rounded-2xl shadow-lg w-full max-w-2xl animate-fade-in modal-content">
+            <h2 id="details-modal-title" class="text-2xl font-bold text-gray-900 mb-4"></h2>
+            <div id="details-modal-body" class="space-y-3 overflow-y-auto pr-2 text-gray-700"></div>
+            <div class="flex justify-end mt-6">
+                <button type="button" class="modal-cancel-btn rounded-md border bg-white py-2 px-6">Close</button>
+            </div>
+        </div>
+    </div>
+    <div id="confirm-modal"
+        class="fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4 hidden">
+        <div class="bg-white p-6 rounded-2xl shadow-lg w-full max-w-sm animate-fade-in">
+            <h2 id="confirm-modal-title" class="text-lg font-bold text-gray-900">Confirm Action</h2>
+            <p id="confirm-modal-body" class="mt-2 text-sm text-gray-600"></p>
+            <div class="flex justify-end space-x-3 mt-6">
+                <button type="button" class="modal-cancel-btn rounded-md border bg-white py-2 px-4">Cancel</button>
+                <button type="button" id="confirm-modal-btn"
+                    class="rounded-md border bg-red-600 py-2 px-4 text-white">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw0sfA0HoJ7l7PfGpBdZsuLzlNF7BUAOSblSI-o_Yq5ka-yj3xS-1cBYBwoaSGrqJPnFA/exec";
+
+        // ... existing code ...
+        const users = {
+            "veer": { password: "veer@123", role: "admin" }, // Yahan badlaav kiya gaya hai
+            "gaurav": { password: "India@123", role: "staff" },
+            "sumit": { password: "India@123", role: "staff" },
+            "rajveer": { password: "India@123", role: "staff" },
+        };
+        // ... existing code ...
+        let currentUser = null;
+        let allComplaints = [];
+        let typeChart, statusChart;
+
+        const elements = {
+            loginPage: document.getElementById('login-page'),
+            appContainer: document.getElementById('app-container'),
+            loginForm: document.getElementById('login-form'),
+            loginError: document.getElementById('login-error'),
+            userNameDisplay: document.getElementById('user-name-display'),
+            logoutBtn: document.getElementById('logout-btn'),
+            navButtons: document.querySelectorAll('.nav-button'),
+            views: document.querySelectorAll('.view-content'),
+            newComplaintBtn: document.getElementById('new-complaint-btn'),
+            complaintModal: document.getElementById('complaint-modal'),
+            detailsModal: document.getElementById('details-modal'),
+            confirmModal: document.getElementById('confirm-modal'),
+            cancelBtns: document.querySelectorAll('.modal-cancel-btn'),
+            complaintForm: document.getElementById('complaint-form'),
+            submitBtn: document.getElementById('submit-btn'),
+            messageBox: document.getElementById('message-box'),
+            loader: document.getElementById('loader'),
+            tableContainer: document.getElementById('complaints-table-container'),
+            tableBody: document.getElementById('complaints-table-body'),
+            searchInput: document.getElementById('search-input'),
+            statsCards: document.getElementById('stats-cards'),
+            selectAllCheckbox: document.getElementById('select-all-checkbox'),
+            bulkDeleteBtn: document.getElementById('bulk-delete-btn'),
+        };
+
+        async function apiCall(action, data) {
+            const payload = { action, data };
+            const response = await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                redirect: 'follow',
+                body: JSON.stringify(payload),
+                headers: { "Content-Type": "text/plain;charset=utf-8" }
+            });
+            if (!response.ok) throw new Error(`Network error. Status: ${response.status}`);
+            return await response.json();
+        }
+
+        async function refreshData() {
+            elements.loader.style.display = 'flex';
+            elements.tableContainer.classList.add('hidden');
+            elements.messageBox.innerHTML = '';
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL);
+                const result = await response.json();
+                if (result.status === 'success' && Array.isArray(result.data)) {
+                    allComplaints = result.data;
+                    renderTable(allComplaints);
+                    renderDashboard(allComplaints);
+                } else { throw new Error(result.message || 'Failed to fetch.'); }
+            } catch (error) {
+                showMessage('error', `Could not fetch data. ${error.message}`);
+            } finally {
+                elements.loader.style.display = 'none';
+                elements.tableContainer.classList.remove('hidden');
+            }
+        }
+
+        function renderTable(complaints) {
+            elements.tableBody.innerHTML = '';
+            if (complaints.length === 0) {
+                elements.tableBody.innerHTML = '<tr><td colspan="7" class="text-center p-6 text-gray-500">No complaints found.</td></tr>';
+                return;
+            }
+            complaints.forEach(c => {
+                const row = document.createElement('tr');
+                row.className = 'bg-white border-b hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="px-4 py-4 role-admin" style="display: none;"><input type="checkbox" class="custom-checkbox row-checkbox" data-row-number="${c.rowNumber}"></td>
+                    <td class="px-6 py-4 font-mono text-xs">${c['Complaint ID'].split('-')[1]}</td>
+                    <td class="px-6 py-4 font-medium text-gray-900">${c.Name}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${c.Type}</td>
+                    <td class="px-6 py-4">${c.Title}</td>
+                    <td class="px-6 py-4">${getStatusPill(c.Status)}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-4">
+                            <button class="view-btn text-blue-600 hover:underline" data-row='${JSON.stringify(c)}'>Details</button>
+                            
+                            <select class="status-change text-sm rounded-md border-gray-300 py-1" data-row-number="${c.rowNumber}">
+                                <option value="In Progress" ${c.Status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                                <option value="Resolved" ${c.Status === 'Resolved' ? 'selected' : ''}>Resolved</option>
+                            </select>
+
+                            <div class="role-admin flex items-center gap-4" style="display: none;">
+                                <button class="edit-btn text-green-600 hover:underline" data-row='${JSON.stringify(c)}'>Edit</button>
+                                <button class="delete-btn text-red-600 hover:underline" data-row-number="${c.rowNumber}">Delete</button>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                elements.tableBody.appendChild(row);
+            });
+            updateRoleUI();
+        }
+
+        function renderDashboard(complaints) {
+            const total = complaints.length;
+            const pending = complaints.filter(c => c.Status !== 'Resolved').length;
+            const resolved = total - pending;
+            elements.statsCards.innerHTML = `
+                <div class="bg-white p-6 rounded-xl shadow-md border"><p class="text-sm text-gray-500">Total</p><p class="text-3xl font-bold text-gray-900">${total}</p></div>
+                <div class="bg-white p-6 rounded-xl shadow-md border"><p class="text-sm text-gray-500">Pending</p><p class="text-3xl font-bold text-yellow-500">${pending}</p></div>
+                <div class="bg-white p-6 rounded-xl shadow-md border"><p class="text-sm text-gray-500">Resolved</p><p class="text-3xl font-bold text-green-500">${resolved}</p></div>`;
+
+            const typeCounts = complaints.reduce((acc, c) => { acc[c.Type] = (acc[c.Type] || 0) + 1; return acc; }, {});
+            const statusCounts = { 'Pending': pending, 'Resolved': resolved };
+
+            if (typeChart) typeChart.destroy();
+            typeChart = new Chart(document.getElementById('complaintsByTypeChart'), { type: 'bar', data: { labels: Object.keys(typeCounts), datasets: [{ label: 'Complaints by Type', data: Object.values(typeCounts), backgroundColor: '#3b82f6' }] }, options: { responsive: true, maintainAspectRatio: true } });
+            if (statusChart) statusChart.destroy();
+            statusChart = new Chart(document.getElementById('complaintsByStatusChart'), { type: 'doughnut', data: { labels: Object.keys(statusCounts), datasets: [{ data: Object.values(statusCounts), backgroundColor: ['#f59e0b', '#22c55e'] }] }, options: { responsive: true, maintainAspectRatio: true } });
+        }
+
+        function getStatusPill(status) {
+            const colors = { 'New': 'bg-blue-100 text-blue-800', 'In Progress': 'bg-yellow-100 text-yellow-800', 'Resolved': 'bg-green-100 text-green-800' };
+            return `<span class="px-3 py-1 text-xs font-medium rounded-full inline-block ${colors[status] || 'bg-gray-100 text-gray-800'}">${status || 'N/A'}</span>`;
+        }
+
+        function setupEventListeners() {
+            elements.loginForm.addEventListener('submit', handleLogin);
+            elements.logoutBtn.addEventListener('click', handleLogout);
+            elements.navButtons.forEach(b => b.addEventListener('click', () => switchView(b.dataset.view)));
+            elements.newComplaintBtn.addEventListener('click', () => {
+                elements.complaintForm.reset();
+                document.getElementById('rowNumber').value = '';
+                document.getElementById('modal-title').innerText = 'Register New Complaint';
+                elements.complaintModal.classList.remove('hidden');
+            });
+            elements.cancelBtns.forEach(btn => btn.addEventListener('click', () => {
+                elements.complaintModal.classList.add('hidden');
+                elements.detailsModal.classList.add('hidden');
+                elements.confirmModal.classList.add('hidden');
+            }));
+            elements.complaintForm.addEventListener('submit', handleFormSubmit);
+            elements.searchInput.addEventListener('input', handleSearch);
+            elements.tableBody.addEventListener('click', handleTableActions);
+            elements.tableBody.addEventListener('change', handleTableActions);
+            elements.selectAllCheckbox.addEventListener('change', handleSelectAll);
+            elements.bulkDeleteBtn.addEventListener('click', () => {
+                const selectedRows = Array.from(document.querySelectorAll('.row-checkbox:checked')).map(cb => parseInt(cb.dataset.rowNumber));
+                if (selectedRows.length > 0) showConfirmModal(`Delete ${selectedRows.length} complaints?`, () => handleDelete(selectedRows));
+            });
+            document.getElementById('mobile').addEventListener('input', e => e.target.value = e.target.value.replace(/[^0-9]/g, ''));
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = elements.loginForm.username.value.toLowerCase();
+            const password = elements.loginForm.password.value;
+            const user = users[username];
+            if (user && user.password === password) {
+                currentUser = { username, role: user.role };
+                elements.loginPage.classList.add('hidden');
+                elements.appContainer.classList.remove('hidden');
+                elements.userNameDisplay.innerText = currentUser.username;
+                updateRoleUI();
+                switchView('dashboard');
+            } else {
+                elements.loginError.innerText = 'Invalid username or password.';
+            }
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            location.reload();
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            elements.submitBtn.disabled = true;
+            elements.submitBtn.innerHTML = `<div class="spinner !w-5 !h-5 !border-2 mr-2"></div> Saving...`;
+            const data = Object.fromEntries(new FormData(elements.complaintForm).entries());
+            const action = data.rowNumber ? 'edit' : 'create';
+            if (action === 'create') data.enteredBy = currentUser.username;
+            try {
+                const result = await apiCall(action, data);
+                showMessage('success', result.message);
+                elements.complaintModal.classList.add('hidden');
+                refreshData();
+            } catch (error) {
+                showMessage('error', `Could not save. ${error.message}`);
+            } finally {
+                elements.submitBtn.disabled = false;
+                elements.submitBtn.innerHTML = 'Save Complaint';
+            }
+        }
+
+        function handleTableActions(e) {
+            const target = e.target;
+            const complaintData = JSON.parse(target.dataset.row || '{}');
+            if (target.classList.contains('view-btn')) showDetailsModal(complaintData);
+            if (target.classList.contains('edit-btn')) showEditModal(complaintData);
+            if (target.classList.contains('status-change')) handleUpdateStatus(parseInt(target.dataset.rowNumber), target.value);
+            if (target.classList.contains('delete-btn')) showConfirmModal('Are you sure you want to delete this complaint?', () => handleDelete([parseInt(target.dataset.rowNumber)]));
+            if (target.classList.contains('row-checkbox')) updateBulkDeleteButton();
+        }
+
+        async function handleUpdateStatus(rowNumber, newStatus) {
+            try {
+                const result = await apiCall('updateStatus', { rowNumber, newStatus });
+                showMessage('success', result.message);
+                refreshData();
+            } catch (error) { showMessage('error', `Update failed. ${error.message}`); }
+        }
+
+        async function handleDelete(rowNumbers) {
+            try {
+                const result = await apiCall('delete', { rowNumbers });
+                showMessage('success', result.message);
+                elements.confirmModal.classList.add('hidden');
+                refreshData();
+            } catch (error) { showMessage('error', `Delete failed. ${error.message}`); }
+        }
+
+        function handleSearch(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = allComplaints.filter(c => Object.values(c).some(val => val.toString().toLowerCase().includes(searchTerm)));
+            renderTable(filtered);
+        }
+
+        function handleSelectAll(e) {
+            document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = e.target.checked);
+            updateBulkDeleteButton();
+        }
+
+        function updateBulkDeleteButton() {
+            const selected = document.querySelectorAll('.row-checkbox:checked').length;
+            elements.bulkDeleteBtn.classList.toggle('hidden', selected === 0);
+        }
+
+        function updateRoleUI() {
+            const isAdmin = currentUser.role === 'admin';
+            document.querySelectorAll('.role-admin').forEach(el => {
+                el.style.display = isAdmin ? '' : 'none';
+            });
+        }
+
+        function switchView(viewName) {
+            elements.views.forEach(v => v.classList.add('hidden'));
+            document.getElementById(`${viewName}-view`).classList.remove('hidden');
+            elements.navButtons.forEach(b => {
+                b.classList.toggle('bg-blue-700', b.dataset.view === viewName);
+                b.classList.toggle('text-blue-100', b.dataset.view !== viewName);
+            });
+            if (viewName === 'complaints' || viewName === 'dashboard') refreshData();
+        }
+
+        function showDetailsModal(data) {
+            document.getElementById('details-modal-title').innerText = `Details: ${data['Complaint ID']}`;
+            document.getElementById('details-modal-body').innerHTML = `
+                <p><strong>Name:</strong> ${data.Name}</p><p><strong>Mobile:</strong> ${data['Mobile Number']}</p>
+                <p><strong>Address:</strong> ${data.Address}</p><p><strong>Ward:</strong> ${data.Ward}</p>
+                <p><strong>Type:</strong> ${data.Type}</p><p><strong>Date:</strong> ${new Date(data.Timestamp).toLocaleString('en-IN')}</p>
+                <p><strong>Status:</strong> ${data.Status}</p><p><strong>Entered By:</strong> ${data['Entered By']}</p><hr class="my-2"><p><strong>Description:</strong></p><p>${data.Description}</p>`;
+            elements.detailsModal.classList.remove('hidden');
+        }
+
+        function showEditModal(data) {
+            elements.complaintForm.reset();
+            document.getElementById('modal-title').innerText = 'Edit Complaint Details';
+            document.getElementById('rowNumber').value = data.rowNumber;
+            document.getElementById('name').value = data.Name;
+            document.getElementById('mobile').value = data['Mobile Number'];
+            document.getElementById('address').value = data.Address;
+            document.getElementById('title').value = data.Title;
+            document.getElementById('type').value = data.Type;
+            document.getElementById('ward').value = data.Ward;
+            document.getElementById('description').value = data.Description;
+            elements.complaintModal.classList.remove('hidden');
+        }
+
+        function showConfirmModal(message, onConfirm) {
+            document.getElementById('confirm-modal-body').innerText = message;
+            const confirmBtn = document.getElementById('confirm-modal-btn');
+            const newConfirmBtn = confirmBtn.cloneNode(true);
+            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+            newConfirmBtn.onclick = onConfirm;
+            elements.confirmModal.classList.remove('hidden');
+        }
+
+        function showMessage(type, text) {
+            const colors = type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+            elements.messageBox.innerHTML = `<div class="p-4 rounded-md ${colors}"><p><b>${type.charAt(0).toUpperCase() + type.slice(1)}!</b> ${text}</p></div>`;
+            setTimeout(() => elements.messageBox.innerHTML = '', 5000);
+        }
+
+        document.addEventListener('DOMContentLoaded', setupEventListeners);
+    </script>
+</body>
+
+</html>
